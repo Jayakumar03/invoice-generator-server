@@ -5,9 +5,12 @@ const puppeteer = require("puppeteer");
 exports.createInvoice = async (req, res, next) => {
   try {
     const { items, totalAmount, userId } = req.body;
+    console.log(items, totalAmount, userId);
 
     if (!items || !totalAmount || !userId) {
-      return new Error("All the fileds are required");
+      return res
+        .status(400)
+        .json({ success: false, message: "All the fields are required" });
     }
 
     const invoiceNumber = generateRandomId();
@@ -24,31 +27,20 @@ exports.createInvoice = async (req, res, next) => {
 
     if (!invoice) {
       return res
-        .json({
-          success: false,
-        })
-        .status(400);
+        .status(400)
+        .json({ success: false, message: "Failed to create invoice" });
     }
 
-    res
-      .json({
-        success: true,
-        invoice,
-      })
-      .status(200);
+    res.status(200).json({ success: true, invoice });
   } catch (error) {
-    res
-      .json({
-        success: false,
-        message: error.message,
-      })
-      .status(500);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
 exports.generatePdf = async (req, res) => {
   try {
     const { invoiceId } = req.params;
+    console.log(invoiceId);
 
     const invoice = await Invoice.findById(invoiceId);
 
