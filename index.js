@@ -2,10 +2,11 @@ const express = require("express");
 const app = express();
 const mongoDB = require("./config/db");
 const cors = require("cors");
+const user = require("./routes/user");
+const invoice = require("./routes/invoice");
 require("dotenv").config();
 mongoDB();
 
-// This will allow all CORS requests
 app.use(cors());
 
 app.options("*", cors());
@@ -18,15 +19,9 @@ app.use(
   })
 );
 
-// ? Regular Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Import all routes here
-const user = require("./routes/user");
-const invoice = require("./routes/invoice");
-
-// Router Middleware
 app.use("/api/v1/user/", user);
 app.use("/api/v1/invoice/", invoice);
 
